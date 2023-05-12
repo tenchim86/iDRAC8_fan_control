@@ -1,4 +1,4 @@
-# iDRAC7 fan control
+# iDRAC8 fan control
 A simple script to control fan speeds on Dell generation 12 PowerEdge servers.<br>
 If the monitored temperature is above 35deg C enable iDRAC dynamic control and exit program.<br>
 If monitored temperature is below 35deg C set fan control to manual and set fan speed to predetermined value.<br>
