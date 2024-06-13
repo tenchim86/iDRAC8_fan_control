@@ -8,15 +8,37 @@
 # The tower servers T320, T420 & T620 inlet temperature sensor is after the HDDs so temperature will
 # be higher than the ambient temperature.
 
+# Starting fan speed in percent
+START=20
+
+# If START is a float, this will convert to int
+START=${START%.*}
+
+# Round START down to nearest multiple of 5
+START=$(($START/5*5))
+
 # Fan speed in %
-SPEED0="0x00"
-SPEED5="0x05"
-SPEED10="0x0a"
-SPEED15="0x0f"
-SPEED20="0x14"
-SPEED25="0x19"
-SPEED30="0x1e"
-SPEED35="0x23"
+SPEED[0]="00"
+SPEED[5]="05"
+SPEED[10]="0a"
+SPEED[15]="0f"
+SPEED[20]="14"
+SPEED[25]="19"
+SPEED[30]="1e"
+SPEED[35]="23"
+SPEED[40]="28"
+SPEED[45]="2d"
+SPEED[50]="32"
+SPEED[55]="27"
+SPEED[60]="3c"
+SPEED[65]="41"
+SPEED[70]="46"
+SPEED[75]="4b"
+SPEED[80]="50"
+SPEED[85]="55"
+SPEED[90]="5a"
+SPEED[95]="5f"
+SPEED[100]="64"
 TEMP_THRESHOLD="35" # iDRAC dynamic control enable thershold
 TEMP_SENSOR="04h"   # Inlet Temp
 #TEMP_SENSOR="01h"  # Exhaust Temp
@@ -45,27 +67,27 @@ else
 fi
 
 # Set fan speed dependant on ambient temperature if inlet temperaturte is below 35deg C.
-# If inlet temperature between 0 and 19deg C then set fans to 15%.
+# If inlet temperature between 0 and 19deg C then set fans to START%.
 if [ "$T" -ge 0 ] && [ "$T" -le 19 ]
 then
-  echo "--> Setting fan speed to 15%"
-  ipmitool raw 0x30 0x30 0x02 0xff $SPEED15
+  echo "--> Setting fan speed to $((16#${SPEED[$START]}))%"
+  ipmitool raw 0x30 0x30 0x02 0xff 0x${SPEED[$START]}
 
-# If inlet temperature between 20 and 24deg C then set fans to 20%
+# If inlet temperature between 20 and 24deg C then set fans to START+5%
 elif [ "$T" -ge 20 ] && [ "$T" -le 24 ]
 then
-  echo "--> Setting fan speed to 20%"
-  ipmitool raw 0x30 0x30 0x02 0xff $SPEED20
+  echo "--> Setting fan speed to $((16#${SPEED[$START+5]}))%"
+  ipmitool raw 0x30 0x30 0x02 0xff 0x${SPEED[$START+5]}
 
-# If inlet temperature between 25 and 29deg C then set fans to 25%
+# If inlet temperature between 25 and 29deg C then set fans to START+10%
 elif [ "$T" -ge 25 ] && [ "$T" -le 29 ]
 then
-  echo "--> Setting fan speed to 25%"
-  ipmitool raw 0x30 0x30 0x02 0xff $SPEED25
+  echo "--> Setting fan speed to $((16#${SPEED[$START+10]}))%"
+  ipmitool raw 0x30 0x30 0x02 0xff 0x${SPEED[$START+10]}
 
-# If inlet temperature between 30 and 35deg C then set fans to 30%
+# If inlet temperature between 30 and 35deg C then set fans to START+15%
 elif [ "$T" -ge 30 ] && [ "$T" -le 34 ]
 then
-  echo "--> Setting fan speed to 30%"
-  ipmitool raw 0x30 0x30 0x02 0xff $SPEED30
+  echo "--> Setting fan speed to $((16#${SPEED[$START+15]}))%"
+  ipmitool raw 0x30 0x30 0x02 0xff 0x${SPEED[$START+15]}
 fi
